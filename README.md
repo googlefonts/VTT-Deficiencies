@@ -28,7 +28,30 @@ _- Function to centre middle bars_
  
 *All notes are based on the publicly available current version of Visual TrueType 6.35, running on Surface Laptop  / Windows 11
 
- 
+
+## Bugs / Suggestions
+
+**Compile VTT talk not working**
+Changes made manually to the code in the VTT Talk window, are not compiled when using the menu option Tools > Compile > VTT talk. 
+
+**Repo:** Open a font in VTT. Add autohinting. Make a manual edit to the VTT Talk code. Use the menu option to complie the changes via, Tools > Compile > VTT talk
+
+**Expected:** Code should compile. The usual and faster method of using CTRL R (Compile) is working as expected
+
+**Importing xml files into larger fonts showing spinning disk**
+
+Importing an xml file into a larger font, shows a spinning disk. It appears that the application has hung, with no indication of progress.
+
+**Repo:** Open a larger font in VTT. (Inter Variable font) Add autohinting. Export XML file,File > Export > All code to XML. Make a change to the xml file. Import file, File > Import > All code from XML. For the Inter Varaible font example the code can take up to 1 + minutes, and looks like the application has hung. For larger fonts such as any CJK, it is difficul to know how loong this action will take. 
+
+**Suggestion:** Show progress bar for import of xml.
+
+**Code is not compiled on Import of XML file**
+Once the XML file is imported, the code needs to be compiled. Tools > Complile > Everything for all glyphs. 
+
+**Suggestion:** Add option to Import, Compile everything for all glyphs and save. 
+
+
 ## Accent positioning and hinting 
 
 **Note: bug / suggestion**
@@ -137,3 +160,4 @@ The second method that uses a dist to control the weight is also not suitable fo
 **Recommendation**
 
 Refine the current function used for centering, to support ’shift’, to control the weight of the vertical bar feature, while keeping the centering aspect of the function. This will maintain a consistency with current recommended hinting practic, that uses the shift command to control the weight of horizontal features. Document the function and make it available for hinting Variable fonts. 
+
