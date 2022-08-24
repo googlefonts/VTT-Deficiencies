@@ -51,6 +51,39 @@ Once the XML file is imported, the code needs to be compiled. Tools > Complile >
 
 **Suggestion:** Add option to Import, Compile everything for all glyphs and save. 
 
+## Instance Range CVT Deltas
+
+**Targeted deltas for design space instances or ranges**
+
+A common feature in typeface design, is that the x-height often varies across weights. For example the x-height in the heavier weights, is often designed to be slightly larger than the Regular, which, when set in print or at high resolution, ‘appears’ optically balanced. Set together, in running text, when heavier weights are used for emphasis for example, the weights ‘appear’ to be optically aligned, even thought the x-height is larger in the bolder weights.
+
+Without the adjustment the bolder weights can appear to be too small when set next to the Regular.
+
+This works well when the typeface is printed or used on a high resolution screen when there are enought pixels to ensure that this subtle difference does not look obviously incorrect, but instead looks optically correct. 
+
+At smaller screen sizes on lower resolution devices however this difference in x-height can be a full pixel. With an x-height of 10 pixels for example in the Regular, and 11 pixels a Bolder weight, this appears jarring and incorrect as there are just not enough pixels to show this subtle difference.
+
+In static fonts, the heavier weights uses the correct and larger cvt value. For lower sizes, where the pixel count of the x-height may differ from Roman to Bold, for example, inhertiance can be used, to force the Bold weight to be equal to the Regular until a size where its appropriate to allow for this subtle difference to be shown, usually a higher sizes where there are more pixels available. This means that in static fonts, the weights can be synchronized for lower screen sizes. For static fonts, each weight of the font contains its own set of hints and cvt values.
+
+In variable fonts however, one set of hints and one cvt is used for heights in the font. The difference in x-height (for example) is reflected in the CVAR table. The cvt for the x-height is set once in the CVT table, for the default instance of the font, and edits are then made in the CVAR table for any heights that change across the design space. This is currently the limit for what can be done to control heights. The CVAR edits must be made to reflect acurately the measurements in the high resolution design. What this means in practice is that heights can vary between weights at smaller screen sizes on lower screen resolution. **Note:** There is no method currently to balance or synchronize the weights in Variable fonts, as is commonly done for static fonts using inheritence.
+
+The functions documented here go some way towards being able to adress this problem. [link to separate folder on the repo that contains the functions as well as the exaplantions]
+
+<img width="100%" height="100%" src="Images/opensans14point.png">
+
+big size detail with measurements graphic from VTT
+text combined at smaller sizes without correction
+text at smaller sizes with correction by using the new function.
+
+**Other example**
+Superior letters need to to use a cvt to control the size on screen and uses one cvt for all weights. Bolder weights could be adjusted in ranges or individual instances to be larger at smaller sizes
+show problem
+show adjusted cvt
+
+**Issues and suggestions:** More testing and documentation is needed. Make the Functions available for use for hinting Variable fonts. Longer term have the Autohinter output these function as part of the default Font Program output. 
+
+
+
 
 ## Accent positioning and hinting 
 
