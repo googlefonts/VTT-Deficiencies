@@ -78,6 +78,54 @@ Showing x-height Control Value Table for Open Sans Variable Regular and CVAR adj
 
 Showing hinted screen rendering at 19ppem / 14 point at 96 dpi, combining Regular and Extrabold in text. **Top** showing the cvt rounding of the regular x-height (10 pixels) and the cvt rounding of the ExtraBold CVAR adjusted x-height (11 pixels) **Bottom** Showing x-height of the ExtraBold adjusted to be equal to the Regular, using FN 119.
 
+**Details on Function 195:**
+
+For the example shown above the call to the function is added (inside an ASM statement) to the cvt table directly after the cvt for the x-height, cvt 6 
+
+6:   1096 /* x height */
+ASM("CALL[], 6, 192, 12, 13, 16384, 16384, 1, 195") 
+
+**Calls Function 195**
+
+**FDEF[], 195**
+/* Function 195 takes 7 arguments */
+/* VERSION 1.0 20200128 */
+ 
+/* This function moves a CVT if it is between a PPEM range AND an AXIS range. High and low values can be the same. */
+/* DEPENDANCY: FN 190 */
+/* CALL[],<CVT>,<amount>,<low PPEM>,<high PPEM>, <low norm AXIS>, <high norm AXIS>, <axis number>, 150 */
+/* <CVT> CVT to be modified */
+/* <amount> Amount to change CVT, in ± 64ths */
+/* <low ppem> Lowest PPEM range to be modified (inclusive) */
+/* <high ppem> Highest PPEM range to be modified (inclusive) */
+/* <low AXIS> Lowest normalized axis value to be modified (inclusive) */
+/* <high AXIS> Highest normalized axis value to be modified (inclusive) */
+/* <axis number> The axis number (one based) */
+/* 195 Function number */
+/* NOTE: If the axis number is not present in the font, it will return an axis value of zero. If this value is within the low AXIS to high AXIS range, the change WILL be applied. */
+ 
+The first parameter after the call is the CVT number.
+
+The second parameter is the change, in 1/64th of a pixel. So, making the CVT two pixels smaller would be -128. A full pixel higher woudl be 64.
+
+The third and fourth parameters are the size range to apply this change. It is inclusive, so 12, 13 would be 12 and 13 PPEM. 12,12 would be just 12 PPEM. 12,30 would be 12 through 30. In the example above 19,19, adjusts the Extrabold x-height at 19ppem only
+
+The fifth and sixth parameters are the ranges to along a variable font axis to apply the change. The ranges must be expressed in what are called by variable fonts, “normalized coordinates”. Normalized coordinates are a mathematical scaling of the coordinate space where zero is the default outline, plus one is the maximum for the axis and minus one is the minimum for the axis. 
+
+Glyph #379 in the Selawik Varaible font shows an example of normalized values for the weight axis. (Glyph #382 is a hexadecimal version of the same). 
+ 
+For this function to work, it needs the equivalent of FN 190, which for a given axis number returns the current axis value. (If the equivalent function number is not 190, FN 195 — or whatever it might be renumbered to — needs to be updated to reference the different function number for FN 190).
+
+The VTT assembler can also work with hexadecimal numbers. Glyph 382 shows the hexadecimal value for the axis. In this sample use of the function as shown above:
+ASM("CALL[], 6, -64, 19, 19, 16384, 16384, 1, 195")
+Instead of using 16834, you could use a hexadecimal value of 4000. The sample would look like this:
+ASM("CALL[], 6, -64, 19, 19, 0x4000, 0x4000, 1, 195")
+…where “0x” indicates the number is hexadecimal and it would perform exactly the same as the previous sample.
+ 
+
+
+
+
 
 **Other example**
 Superior letters need to to use a cvt to control the size on screen and uses one cvt for all weights. Bolder weights could be adjusted in ranges or individual instances to be larger at smaller sizes
