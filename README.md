@@ -6,27 +6,29 @@ by [Michael Duggan](https://twitter.com/mickduggan)
 
 VisualTrueType 6.35 includes support to handle all aspects of hinting Variable fonts. There are however areas where the code output from the autohinter does not work optimally. There is also very limited support in the Autohinter for any comprehensive solutions for hinting complex script fonts.
 
-The following notes are intended to open up discussion among the wider type community as well as to serve as pointers for any future open source development work on the VTT Autohinter. The areas discussed below regarding hinting variable fonts, are where I spend the most time, both refining the code and checking for consistent and reliable code output. The eventual goal is to achieve a greater level of consistency, and global support for scripts other than latin, as well as correctness and confidence in the Autohinter code output, resulting in less time spent making manual adjustments. The notes are broken out into a few rough categories.
+The following notes are intended to open up discussion among the wider type community as well as to serve as pointers for any future open source development work on the VTT Autohinter. The areas discussed below regarding hinting variable fonts, are where I spend the most time, both refining the code and checking for consistent and reliable code output. The eventual goal is to achieve a greater level of consistency, and global support for scripts other than Latin, as well as correctness and confidence in the Autohinter code output, resulting in less time spent making manual adjustments. The notes are broken out into a few rough categories.
 
-**1. Existing bugs or unexpected behaviours while using VTT 6.35**
+**1. Existing bugs or unexpected behaviours while using VTT 6.35, and suggested ideas for improvements**
 
-**2. Ideas, and code for future hinting of Variable fonts**
-
-_These ideas will require full discussion, development work and full testing. Once fully developed, and tested, they can be documented and made available for use in hinting Variable fonts. These ideas discussed specifically referecne hinting variable fonts._ 
-
-**3. Currently supported but needs development work and testing, to refine, and fit into the current hinting workflow**
+**2. Ideas, and code for future hinting of Variable fonts.  These ideas are currently supported but need full development work and testing, to refine, and fit into the autohinter and hinting workflow**
 
 _- Addition of Global deltas to cvt’s for variation instances or ranges_
 
 _- Function to centre middle bars_
 
-**4. Future ideas for VTT autohinter development work** 
+_These ideas will require full discussion, development work and full testing. Once fully developed, and tested, they can be documented and made available for use in hinting Variable fonts. These ideas discussed specifically referecne hinting variable fonts._ 
 
-**5. New ideas for approaches to hinting for modern rendering environments**
+**3. Future ideas for VTT autohinter development work** 
+
+... support in the autohinter for scripts other than Latin
+
+**4. New ideas for approaches to hinting for modern rendering environments**
  
 *All notes are based on the publicly available current version of Visual TrueType 6.35, running on Surface Laptop  / Windows 11
 
-## Bugs / Suggestions
+## 1. Bugs / Suggestions
+
+_Bugs and suggestions for improvements to the VTT GUI and Autohinter_
 
 **Bug: Compile VTT talk via menu option, not working**
 
@@ -48,14 +50,16 @@ Importing an xml file into a larger font, shows a spinning disk. It appears that
 
 **Repo:** Open a larger font in VTT. (Inter Variable font) Add autohinting. Export XML file File > Export > All code to XML. Make a change to the xml file. Import file, File > Import > All code from XML. For the Inter Varaible font example the code can take up to 1 + minutes, and looks like the application has hung. For larger fonts such as any CJK, it is difficult to know how long this action will take. 
 
-**Recommandation:** Show progress bar for import of xml.
+**Recommendation:** Show progress bar for import of xml.
 
-**Code is not compiled on Import of XML file**
-When changes are made and an XML file is imported in VTT, the code needs to be compiled. Tools > Complile > Everything for all glyphs. 
+**Suggestion: Compile everything for all glyphs and save on Import of XML file**
+When changes are made to an exported XML file, and the XML file is imported in VTT, the code needs to be compiled. Tools > Complile > Everything for all glyphs. 
 
-**Suggestion:** Add option to Import, Compile everything for all glyphs and save. 
+**Idea:** Add option in the VTT UI, to Import, Compile everything for all glyphs and save. 
 
-## Instance Range CVT Deltas
+
+## Instance Range CVT Deltas 
+_Ideas, and code for future hinting of Variable fonts_
 
 **Targeted cvt deltas for design space instances or instance ranges**
 
@@ -134,6 +138,60 @@ ASM("CALL[], 6, -64, 19, 19, 0x4000, 0x4000, 1, 195")
 Superior letters need to to use a cvt to control the size on screen and uses one cvt for all weights. Bolder weights could be adjusted in ranges or individual instances to be larger at smaller sizes
 
 **Issues and suggestions:** More testing and documentation is needed. Make the Functions available for use for hinting Variable fonts. Longer term have the Autohinter output these function as part of the default Font Program output. 
+
+## Middle bar centering
+
+_Ideas, and code for future hinting of Variable fonts_
+
+**Use case**
+
+In Type design it is common practice to design the middle bar of the H and other characters such as E F, to be optically centered rather than mathematically centered. There are many glyphs in a typical Latin font, including glyphs in the Latin, Greek and Cyrillic designs that share this design characteristic.
+
+A middle bar that is designed to be mathematically centered will appear optically too low. This optical effect is adjusted for in the high resolution design. In the case of the H bar for example, the bar is moved up slightly so that it _‘appears’_ to be centered.
+
+One of the benefits of hinting Variable fonts is one simple set of hints can be applied to all variations in the font. This approach however has drawbacks. Once the hinting code had been added, and compiled, there are not many other options to adjust any less than ideal visual results across the variation space.
+
+Lets have a look at the following example of the Hinting for the H in the Google Sans Variable Font. The middle bar of the H has already been designed to be slightly higher than the mathematical centre, and this works well for high resolution output such as in print or on higher resolution screens. For lower resolutions, screens, where there are less pixels, rounding issues in different weights across the variation design space can cause the middle bar to appear too low at certain sizes and in certain weights variations. 
+
+There are only a couple of ways to approach the hinting to center the middle bar. 
+
+<img width="100%" height="100%" src="Images/LOW11GSH.png">
+
+1. YIP Anchor the bottom point of the middle bar between the grid fitted points on the baseline and Cap height, and control the weight of the bar vertically from the bottom to the top of the bar.
+
+<img width="100%" height="100%" src="Images/LOW12GSH.png">
+
+2. YIP Anchor the top point of the middle bar between the grid fitted points on the baseline and Cap height, and control the weight of the bar vertically from the top to the bottom of the bar. [insert graphic]
+
+Both of these approaches result in the middle bar appearing too low at certain sizes in certain weight instances, in these examples in the Bold Variation at 11,13,18 and 20ppem
+
+When hinting static fonts, whenever rounding causes the bar to appear too low, an _inline delta command_ can be added to adjust the position of the bar at a specific size to set it to correctly appear centered. **Note:** In variable fonts it is not possible to add delta commands as there is no one command that will work for all weight variations.
+
+**Middle Bar centering Function**
+
+Another approach to solve this problem is to use an already existing function [Function 116 as output by an older versioon of the VTT Autohinter] This function is supported in the current Font program generated by VTT when autohinting a font, but is not output by default when using the Light Latin Autohinter.
+
+Let’s have a look at how it works to help in centering the middle bar of the H
+
+<img width="100%" height="100%" src="Images/CENTER12.png">
+
+<img width="100%" height="100%" src="Images/CENTER18.png">
+
+Using this method and function results in a middle bar that is optically and visually centered accross all weight variations and sizes. One effect of this approach is that one side of the middle bar does not always fall on a sharp pixel boundary. The result of this is slightly more blur in the rendering of the horizontal bar. However this may be better for the visual output, than having the middle bar appearing to low or too high.
+
+The Function [insert function number] supports two methods of use
+
+1. Uses a cvt to control the weight of the middle bar
+
+2. uses a Dist to control the weight of the middle bar
+
+Unfortunately neither of these methods fit into the current workflow and methods for hinting Variable fonts. Cvt’s are not typically not used to control the weights of  vertical features (ie: horizontal bars) 
+
+The second method that uses a dist to control the weight is also not suitable for all variable fonts, especially any that support lighter weight variations. The dist command by its nature, always rounds to a full pixel. This causes too much distortion in lighter weights and is not recommend for use.
+
+**Recommendation**
+
+Refine the current function used for centering, to support ’Yshift’, to control the weight of the vertical bar feature, while keeping the centering aspect of the function. This will maintain a consistency with current recommended hinting practic, that uses the shift command to control the weight of horizontal features. Document the function and make it available for hinting Variable fonts. 
 
 
 ## Accent positioning and hinting 
@@ -217,58 +275,4 @@ Acute accent hinting
 
  
 **Recommend** Autohinter should be extended to have built in special intelligence specific to accented glyphs. The approach is based on generic common hinting strategies for accents. See illustrations and methods described above.
-
-## Middle bar centering
-
-**Use case**
-
-In Type design it is common practice to design the middle bar of the H and other characters such as E F, to be optically centered rather than mathematically centered. There are many glyphs in a typical Latin font, including glyphs in the Latin, Greek and Cyrillic designs that share this design characteristic.
-
-A middle bar that is designed to be mathematically centered will appear optically too low. This optical effect is adjusted for in the high resolution design. In the case of the H bar for example, the bar is moved up slightly so that it _‘appears’_ to be centered.
-
-One of the benefits of hinting Variable fonts is one simple set of hints can be applied to all variations in the font. This approach however has drawbacks. Once the hinting code had been added, and compiled, there are not many other options to adjust any less than ideal visual results across the variation space.
-
-Lets have a look at the following example of the Hinting for the H in the Google Sans Variable Font. The middle bar of the H has already been designed to be slightly higher than the mathematical centre, and this works well for high resolution output such as in print or on higher resolution screens. For lower resolutions, screens, where there are less pixels, rounding issues in different weights across the variation design space can cause the middle bar to appear too low at certain sizes and in certain weights variations. 
-
-There are only a couple of ways to approach the hinting to center the middle bar. 
-
-<img width="100%" height="100%" src="Images/LOW11GSH.png">
-
-1. YIP Anchor the bottom point of the middle bar between the grid fitted points on the baseline and Cap height, and control the weight of the bar vertically from the bottom to the top of the bar.
-
-<img width="100%" height="100%" src="Images/LOW12GSH.png">
-
-2. YIP Anchor the top point of the middle bar between the grid fitted points on the baseline and Cap height, and control the weight of the bar vertically from the top to the bottom of the bar. [insert graphic]
-
-Both of these approaches result in the middle bar appearing too low at certain sizes in certain weight instances, in these examples in the Bold Variation at 11,13,18 and 20ppem
-
-When hinting static fonts, whenever rounding causes the bar to appear too low, an _inline delta command_ can be added to adjust the position of the bar at a specific size to set it to correctly appear centered. **Note:** In variable fonts it is not possible to add delta commands as there is no one command that will work for all weight variations.
-
-**Middle Bar centering Function**
-
-Another approach to solve this problem is to use an already existing function [Function 116 as output by an older versioon of the VTT Autohinter] This function is supported in the current Font program generated by VTT when autohinting a font, but is not output by default when using the Light Latin Autohinter.
-
-Let’s have a look at how it works to help in centering the middle bar of the H
-
-<img width="100%" height="100%" src="Images/CENTER12.png">
-
-<img width="100%" height="100%" src="Images/CENTER18.png">
-
-Using this method and function results in a middle bar that is optically and visually centered accross all weight variations and sizes. One effect of this approach is that one side of the middle bar does not always fall on a sharp pixel boundary. The result of this is slightly more blur in the rendering of the horizontal bar. However this may be better for the visual output, than having the middle bar appearing to low or too high.
-
-The Function [insert function number] supports two methods of use
-
-1. Uses a cvt to control the weight of the middle bar
-
-2. uses a Dist to control the weight of the middle bar
-
-Unfortunately neither of these methods fit into the current workflow and methods for hinting Variable fonts. Cvt’s are not typically not used to control the weights of  vertical features (ie: horizontal bars) 
-
-The second method that uses a dist to control the weight is also not suitable for all variable fonts, especially any that support lighter weight variations. The dist command by its nature, always rounds to a full pixel. This causes too much distortion in lighter weights and is not recommend for use.
-
-[Insert graphic example]
-
-**Recommendation**
-
-Refine the current function used for centering, to support ’Yshift’, to control the weight of the vertical bar feature, while keeping the centering aspect of the function. This will maintain a consistency with current recommended hinting practic, that uses the shift command to control the weight of horizontal features. Document the function and make it available for hinting Variable fonts. 
 
