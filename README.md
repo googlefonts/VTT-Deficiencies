@@ -4,31 +4,31 @@ by [Michael Duggan](https://twitter.com/mickduggan)
 
 ## Introduction
 
-VisualTrueType 6.35 includes support to handle all aspects of hinting Variable fonts. There are however some areas where the code output from the autohinter does not work optimally. There is also limited support in the Autohinter for Non Latin fonts.
+VisualTrueType 6.35 includes support to handle all aspects of hinting Variable fonts. There are however areas where the code output from the autohinter does not work optimally. There is also very limited support in the Autohinter for any comprehensive solutions for hinting complex script fonts.
 
-The following notes are intended to open up discussion among the wider type community as well as to serve as pointers for any future open source development work on the VTT Autohinter. The areas discussed below regarding hinting variable fonts, are where I spend the most time, both refining the code and checking for consistent and reliable code output. The eventual goal is to achieve a greater level of consistency, correctness and confidence in the Autohinter code output, resulting in less time spent making manual adjustments. The notes are broken out into a few rough categories.
+The following notes are intended to open up discussion among the wider type community as well as to serve as pointers for any future open source development work on the VTT Autohinter. The areas discussed below regarding hinting variable fonts, are where I spend the most time, both refining the code and checking for consistent and reliable code output. The eventual goal is to achieve a greater level of consistency, and global support for scripts other than latin, as well as correctness and confidence in the Autohinter code output, resulting in less time spent making manual adjustments. The notes are broken out into a few rough categories.
 
-**Existing bugs or unexpected behaviours while using VTT 6.35**
+**1. Existing bugs or unexpected behaviours while using VTT 6.35**
 
-**Ideas, and code for future hinting of Variable fonts**
+**2. Ideas, and code for future hinting of Variable fonts**
 
-_These ideas will require more discussion and full testing. Once they are fully developed, and tested, they can be documented and made available for use in hinting Variable fonts. These ideas cover areas of hinting variable fonts._ 
+_These ideas will require full discussion, development work and full testing. Once fully developed, and tested, they can be documented and made available for use in hinting Variable fonts. These ideas discussed specifically referecne hinting variable fonts._ 
 
-**Currently supported but needs development work and testing, to refine, and fit into the current hinting workflow**
+**3. Currently supported but needs development work and testing, to refine, and fit into the current hinting workflow**
 
 _- Addition of Global deltas to cvt’s for variation instances or ranges_
 
 _- Function to centre middle bars_
 
-**Future ideas for VTT autohinter development work** 
+**4. Future ideas for VTT autohinter development work** 
 
-**New ideas for approaches to hinting for modern rendering environments**
+**5. New ideas for approaches to hinting for modern rendering environments**
  
 *All notes are based on the publicly available current version of Visual TrueType 6.35, running on Surface Laptop  / Windows 11
 
 ## Bugs / Suggestions
 
-**Compile VTT talk via menu option, not working**
+**Bug: Compile VTT talk via menu option, not working**
 
 Changes made manually to the code in the VTT Talk window, are not compiled when using the menu option Tools > Compile > VTT talk. 
 
@@ -36,19 +36,19 @@ Changes made manually to the code in the VTT Talk window, are not compiled when 
 
 **Expected:** Code should compile. The usual and faster method of using CTRL R (Compile) is working as expected
 
-**X-Positioning composite code**
+**Bug: X-Positioning composite code is broken in Variable fonts**
 
 The autohinter has an option to disable all x-direction hinting for the entire font under _(Tools > options > Autohinter Tab > Disable X-Direction Hints)_  X-positioning code for accents is still generated however when this option is set.
 
-**Recommendation:** Disable x-positioning code output from Autohinter for accent positioning in x-direction [SVTCAX]
+**Recommendation:** Disable x-positioning code output from Autohinter for accent positioning in x-direction [SVTCAX]. _See below for more details_
 
-**Importing xml files into larger fonts showing spinning disk**
+**Bug: Importing xml files into larger fonts showing spinning disk**
 
 Importing an xml file into a larger font, shows a spinning disk. It appears that the application has hung, with no indication of progress.
 
 **Repo:** Open a larger font in VTT. (Inter Variable font) Add autohinting. Export XML file File > Export > All code to XML. Make a change to the xml file. Import file, File > Import > All code from XML. For the Inter Varaible font example the code can take up to 1 + minutes, and looks like the application has hung. For larger fonts such as any CJK, it is difficult to know how long this action will take. 
 
-**Suggestion:** Show progress bar for import of xml.
+**Recommandation:** Show progress bar for import of xml.
 
 **Code is not compiled on Import of XML file**
 When changes are made and an XML file is imported in VTT, the code needs to be compiled. Tools > Complile > Everything for all glyphs. 
@@ -130,33 +130,30 @@ ASM("CALL[], 6, -64, 19, 19, 0x4000, 0x4000, 1, 195")
 …where “0x” indicates the number is hexadecimal and it would perform exactly the same as the previous sample.
  
 
-
 **Other example**
 Superior letters need to to use a cvt to control the size on screen and uses one cvt for all weights. Bolder weights could be adjusted in ranges or individual instances to be larger at smaller sizes
-
-show problem
-show adjusted cvt
 
 **Issues and suggestions:** More testing and documentation is needed. Make the Functions available for use for hinting Variable fonts. Longer term have the Autohinter output these function as part of the default Font Program output. 
 
 
 ## Accent positioning and hinting 
 
-**Note: bug / suggestion**
+_Tag: Bugs / Suggestions / recommendations_
 
 **Autohinter output for x-axis Accent positioning is incorrect in Variable fonts**
 
-The current version of the VTT Autohinter outputs positioning code for both x and y direction positioning of accents above base glyphs. 
+The current version of the VTT 6.35 Autohinter outputs positioning code for both x-direction and y-direction positioning of accents above base glyphs. 
 
 **X-Positioning composite code**
 
-The autohinter has an option to disable all x-direction hinting for the entire font under _(Tools > options > Autohinter Tab > Disable X-Direction Hints)_  X-positioning code for accents is still generated however when this option is set.
+The autohinter has an option to disable all x-direction hinting for the entire font under _(Tools > options > Autohinter Tab > Disable X-Direction Hints)_  
+X-positioning code for accents is still generated however when this option is set. 
 
-**Recommendation:** Disable x-positioning code output from Autohinter for accents positioning in x-direction [SVTCAX]
+The code generated by the VTT Version 6.35 Autohinter, x-positioning code, calls a Function 87. The function is designed to space accents above and below base glyphs. The results however in Variable fonts are accents that are incorrecly positioned. Currently all accented glyphs need to be carefully checked to make sure the automatic code is correct.
 
-The code refers to a function (note number) which results in badly position accents in Variable fonts
+**Current solution in VTT 6.35:** Manually check and or delete code output from Autohinter for accents positioning in x-direction [SVTCAX], or, use python script found [here](https://github.com/source-foundry/vtt-hinting-scripts) 
 
-The code used in the VTT Version 6.35 to position accents in the x-direction causes problems in Variable fonts. Currently all accented glyphs need to be carefully checked to make sure the automatic code is correct.
+_The script removes all of the SVTCA[X] glyph assembly source blocks from the VTT XML export.  It is a single pass replacement over the full glyph set._
 
 **Accent Positioning code**
 
@@ -166,24 +163,19 @@ X-direction positioning Code
 
 **Top:** Function 87, used to position accents, causes the circumflex accent, to be uncentered.
 
-**Bottom:** X-direction code removed. Glyph program compiled and saved. Accent is now centered and positioned correctly, using **x-offset code only**, for all Variation instances.
-
-The x-direction code for composite glyphs, generated by the autohinter, should be removed for all accented glyphs. Function 87, used to position accents, can cause badly positioned accents in some Variation instances in Variable fonts.
+**Bottom:** X-direction code removed, ([SVTCAX] code block), Glyph program compiled and saved. Accent is now centered and positioned correctly, using **x-offset code only**, for all Variation instances.
 
 The x-offset code is sufficient to position accents correctly for all Variation Instances in the x-direction. By removing the x-direction code, accents will be positioned correctly. 
 
 This also reduces the overall font file size.
 
+**Recommendation:** Modify the Autohinter to respect, Disable all x-direction hinting for the entire font under _(Tools > options > Autohinter Tab > Disable X-Direction Hints)_ to disable code output for accents positioning in x-direction [SVTCAX]
+
 **Y-Positioning code**
 
-The autohinter also generated y-axis positioning code to position accents above base glyphs.
+The autohinter also generates y-axis positioning code to position accents above base glyphs, calling a Function 86 dessigned for this purpose
 
-[add discussion and text from Hinting Variable fonts, describing the problem]
-
-**Current solution**
-[Insert graphic] with y-code v custom y-code
-
-Show example [ insert graphics and code explanations as in VTT Hinting Variable fonts]
+for details on the problem with this in Variable font, and current workarounds and solutions, see [Positioning accents](https://github.com/googlefonts/how-to-hint-variable-fonts#positioning-accents)
 
 **Recommendation:** Refine function to output corrected positioning code. 
 
@@ -191,11 +183,40 @@ Show example [ insert graphics and code explanations as in VTT Hinting Variable 
 
 **Better default Autohinting of accents**
 
-The autohinter does not use any special method to when adding hinting to base unique accent glyphs. The result is often glyph shapes that collapse to one pixel in height, rendering the accents at smaller screen sizes unreadable. The base set of accents in a typical Latin font, are used in many composite glyphs, in some case as much as half the glyphs set. The work to fine tune and make readable accents is critical in achieving a well hinted font. 
+The Autohinter does not use any special method to when adding hinting to base unique accent glyphs. The result is often glyph shapes that collapse to one pixel in height, rendering the accents at smaller screen sizes unreadable. The base set of accents in a typical Latin font, are used in many composite glyphs, in some case as much as half the glyphs set. The work to fine tune and make readable accents is critical in achieving a well hinted font. 
 
-**Suggestion** Refine the autohinter approach for hinting accents, smarter auto hinting, add new rules based on current best practices for hinting accents (i.e. always maintain a minimum distance of two pixels] 
+**Recommendation** Refine the autohinter approach for hinting accents, smarter auto hinting, add new rules based on current best practices for hinting accents (i.e. always maintain a minimum distance of two pixels] 
 
+**Accent Hinting details**
+ 
+The VTT Autohinter uses a lightweight hinting strategy that focuses on fitting common heights, such as x-height, Cap Height, Ascender, Descender to CVT heights. This strategy, takes advantage of Windows symmetric rendering modes and anchors these key heights to the grid, thereby maintaining consistency in heights across a font family. This method of grid-fitting also helps to reduce blur, and minimizes distortion.
+ 
+When the autohinter runs on glyphs that do not have char group data associated with them, such as accents, it reverts to a basic hinting strategy of anchoring points, _(usually without a reference to a cvt)_ at the y-min and y-max of the glyph. The hinting approach works well for glyphs that reference Height cvt’s, but fails when this basic anchoring is applied to hinting accents. The autohinter approach does not take into account the structure of the accented glyphs. Accents are special case glyphs, and do not normally require any height cvt’s. The Autohinting approach results in points at the y-min and y-max, grid-fitting independently of one another. This can result in either collapsed hinted outlines in some cases or hinted accents that only appear as one pixel tall. Most accents need to be at least two pixels tall for a correctly described their appearance at smaller sizes on lower resolution screens.
+ 
+See the following examples. _(Font Inconsolata Variable font)_
 
+<img width="100%" height="100%" src="Images/MacronHinting.png">
+
+**Macron accent hinting**
+
+**Left:** Unhinted outline / no Gridfit
+
+**Middle:** Autohinted outline / Gridfit
+
+**Right:** Manually hinted outline / Gridfit
+
+<img width="100%" height="100%" src="Images/AcuteHinting.png">
+
+Acute accent hinting
+
+**Left:** Unhinted outline / no Gridfit
+
+**Middle:** Autohinted outline / Gridfit
+
+**Right:** Manually hinted outline / Gridfit
+
+ 
+**Recommend** Autohinter should be extended to have built in special intelligence specific to accented glyphs. The approach is based on generic common hinting strategies for accents. See illustrations and methods described above.
 
 ## Middle bar centering
 
