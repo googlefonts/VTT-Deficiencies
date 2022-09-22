@@ -16,7 +16,7 @@ _- Addition of Global deltas to cvt’s for variation instances or ranges_
 
 _- Function to centre middle bars_
 
-_These ideas will require full discussion, development work and full testing. Once fully developed, and tested, they can be documented and made available for use in hinting Variable fonts. These ideas discussed specifically referecne hinting variable fonts._ 
+_These ideas will require full discussion, development work and full testing. Once fully developed, and tested, they can be documented and made available for use in hinting Variable fonts. These ideas discussed specifically reference hinting variable fonts._ 
 
 **3. Future ideas for VTT autohinter development work** 
 
@@ -48,12 +48,12 @@ The autohinter has an option to disable all x-direction hinting for the entire f
 
 Importing an xml file into a larger font, shows a spinning disk. It appears that the application has hung, with no indication of progress.
 
-**Repo:** Open a larger font in VTT. (Inter Variable font) Add autohinting. Export XML file File > Export > All code to XML. Make a change to the xml file. Import file, File > Import > All code from XML. For the Inter Varaible font example the code can take up to 1 + minutes, and looks like the application has hung. For larger fonts such as any CJK, it is difficult to know how long this action will take. 
+**Repo:** Open a larger font in VTT. (Inter Variable font) Add autohinting. Export XML file File > Export > All code to XML. Make a change to the xml file. Import file, File > Import > All code from XML. For the Inter Variable font example the code can take up to 1 + minutes, and looks like the application has hung. For larger fonts such as any CJK, it is difficult to know how long this action will take. 
 
 **Recommendation:** Show progress bar for import of xml.
 
 **Suggestion: Compile everything for all glyphs and save on Import of XML file**
-When changes are made to an exported XML file, and the XML file is imported in VTT, the code needs to be compiled. Tools > Complile > Everything for all glyphs. 
+When changes are made to an exported XML file, and the XML file is imported in VTT, the code needs to be compiled. Tools > Compile > Everything for all glyphs. 
 
 **Idea:** Add option in the VTT UI, to Import, Compile everything for all glyphs and save. 
 
@@ -88,7 +88,7 @@ This works well when the typeface is printed or used on a high resolution screen
 
 At smaller screen sizes on lower resolution devices however, this difference in x-height can be a full pixel. With an x-height of 10 pixels for example in the Regular, and 11 pixels in a Bolder weight, the appearance is jarring and looks incorrect, as there are not enough pixels to show this subtle difference.
 
-For static fonts, each weight of the font contains its own set of hints and cvt values. In static fonts, the heavier weights use the correct and larger cvt value in the cvt table. For smaller sizes, where rounding of the x-height may differ from Roman to Bold, for example, [inheritance](https://github.com/googlefonts/how-to-hint-variable-fonts#cvt---control-value-table) can be used, to force the Bold weight to be equal to the Regular until a size where its appropriate to allow for this subtle difference to be shown, usually a higher sizes where there are more pixels available. This means that in static fonts, the weights can be synchronized for smaller screen sizes when needed.
+For static fonts, each weight of the font contains its own set of hints and cvt values. In static fonts, the heavier weights use the correct and larger cvt value in the cvt table. For smaller sizes, where rounding of the x-height may differ from Roman to Bold, for example, [inheritance](https://github.com/googlefonts/how-to-hint-variable-fonts#cvt---control-value-table) can be used, to force the Bold weight to be equal to the Regular until a size where its appropriate to allow for this subtle difference to be shown, usually a higher sizes where there are more pixels available. This means that in static fonts, the weights can be synchronised for smaller screen sizes when needed.
 
 In variable fonts however, one set of hints and one cvt is used for heights in the font. The difference in x-height (for example) when there is a difference, is reflected in the [CVAR](https://github.com/googlefonts/how-to-hint-variable-fonts#cvar--cvt-variations-table) table. The cvt for the x-height is set in the CVT table, for the default instance of the font, and edits are then made to this cvt in the CVAR table for any heights that change across the design space. This is currently the limit for what can be done to control heights. The CVAR edits must be made to reflect accurately the measurements in the high resolution design. What this means in practice is that rounding of heights can vary between weights at smaller screen sizes on lower screen resolutions. **Note:** There is no method currently to balance or synchronize the weights in Variable fonts, as is commonly done for static fonts using inheritence.
 
