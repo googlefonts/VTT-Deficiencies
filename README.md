@@ -57,6 +57,25 @@ When changes are made to an exported XML file, and the XML file is imported in V
 
 **Idea:** Add option in the VTT UI, to Import, Compile everything for all glyphs and save. 
 
+**Suggestion:** Change the Default output from the Autohinter from ‘ResYDist’ to ‘YShift’ for Variable font hinting.
+
+The current recommendation for hinting Variable fonts is to replace all ‘ResYDist’ instructions with a ‘YShift’ instruction. Using the ‘YShift’ command in place of the ‘ResYDist’ for controlling stem weights, helps to render the outlines of all weight Variations from lightest to heaviest, using a more natural rendering from the outline. _The shift command is typically used to constrain a distance in the y-direction between two points, when no CVT is used or needed (i.e. when a distance is too small to warrant using a CVT to control the distance)_
+
+The ‘ResYDist’ command, causes stems to round to full pixels at smaller sizes. This causes distortions, particularly in lighter outlines. Using the YShift command in place of ResYDist corrects these distortions and renders the outlines more accurately.
+
+**Current solution:** Export all hinting code from the font to XML, edit the XML in an external text editor, replace all ResYDist references with YShift, re-import XML back to your original font, with modifications, or, use python script found [here](https://github.com/source-foundry/vtt-hinting-scripts) 
+
+**Recommended solution:** Modify the Autohinter to output the YShift command, by default, when hinting Variable fonts. 
+
+**Suggestion:** Investigate adding support to add RES commands via the Hinting GUI in VTT.
+
+The Res addition to the command ResAnchor, for example, stands for Rendering Environment Specific, and ensures that the appropriate rounding happens, for various rendering environments. This saves adding additional Hinting commands if Hinting is required to work in a variety of rendering environments, and is recommended when hinting Variable fonts. _The Res command calls a Function, that is designed to also allow for more subtle rendering of features such as undershoots and overshoots_
+
+**Current VTT Support:** The ‘Res’ (Resolution Environment Specific) command is not supported when using the Graphical Hinting tools. This additional code must be added manually, in the VTTtalk window.
+
+**Recommended solution:** Investigate adding support to add RES commands via the Hinting GUI in VTT. When rehinting any existing glyph from scratch, for example, having the ability to add the RES commands via the hinting GUI saves time, and results in an improved workflow. Currently the RES commands can only be added manually to the VTT Talk, after the glyph has been hinted using the Graphical Hinting tools. 
+
+
 
 ## Instance Range CVT Deltas 
 _Ideas, and code for future hinting of Variable fonts_
