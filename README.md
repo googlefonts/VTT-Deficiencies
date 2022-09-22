@@ -280,7 +280,17 @@ See the following examples. _(Font Inconsolata Variable font)_
 
 **Middle:** Autohinted outline / Gridfit
 
+YAnchor (0) Moves point 0 to the grid, without a reference to a cvt.
+
+ResYAnchor (1, 16) Moves point 1 to the control value listed in the ‘Control Program’, that corresponds to the ‘other’, (cvt #16) and rounds this point to a grid line.
+
+Both points on the outline, 0, and 16 are rounded to the grid independantly of one another. In this case at 12ppem, point zero and point 16 both round to the same pixel height, resulting in a collaped hinted oultine. The only reason there are any pixels displaying in this case is due to drop-out control being activated.
+
 **Right:** Manually hinted outline / Gridfit
+
+YAnchor (0) Moves point 0 to the grid, without a reference to a cvt.
+
+YShift (0,1) Shifts point 1, to a new position on the grid, relative to point 0’s new position on the grid, while also maintaining a minumum distance. This is the correct hinting solution. 
 
 <img width="100%" height="100%" src="Images/AcuteHinting.png">
 
