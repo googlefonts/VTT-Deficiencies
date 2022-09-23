@@ -282,9 +282,9 @@ See the following examples. _(Font Inconsolata Variable font)_
 
 YAnchor (0) Moves point 0 to the grid, without a reference to a cvt.
 
-ResYAnchor (1, 16) Moves point 1 to the control value listed in the ‘Control Program’, that corresponds to the ‘other’, (cvt #16) and rounds this point to a grid line.
+ResYAnchor (1, 16) Moves point 1 to the control value listed in the ‘Control Program’, that corresponds to an automatically generated ‘other’, (cvt #16) and rounds this point to a grid line.
 
-Both points on the outline, 0, and 16 are rounded to the grid independantly of one another. In this case at 12ppem, point zero and point 16 both round to the same pixel height, resulting in a collaped hinted oultine. The only reason there are any pixels displaying in this case is due to drop-out control being activated.
+Both points on the outline, 0, and 1 are rounded to the grid independantly of one another. In this case at 12ppem, point zero and point 1 both round to the same pixel height, resulting in a collaped hinted outline. The only reason there are any pixels displaying in this case is due to drop-out control being activated.
 
 **Right:** Manually hinted outline / Gridfit
 
@@ -300,8 +300,17 @@ Acute accent hinting
 
 **Middle:** Autohinted outline / Gridfit
 
+YAnchor (1) Moves point 1, (point at y-min) to the grid, without a reference to a cvt.
+
+YAnchor (2) Moves point 2 (point at y-max) to the grid, without a reference to a cvt.
+
+Both points on the outline, 1, and 2 are rounded to the grid independantly of one another. In this case at 12ppem, point 1, rounds up to grid, point 2 rounds down to grid, resulting in a hinted outline that is one pixel in height. To correctly describe an acute accent, a minimum of two pixels in height is needed. The autohinted outline in case will appear as a dot or flat line. 
+
 **Right:** Manually hinted outline / Gridfit
 
+YAnchor (1) Moves point 1, (point at y-min) to the grid, without a reference to a cvt.
+
+YDist(1,2,>=2) Moves point 2, to a new position on the grid, relative to point 1’s new position on the grid, while also maintaining a minumum distance of 2 pixels at all sizes for all variation instance. (width and weight)
  
-**Recommend** Autohinter should be extended to have built in special intelligence specific to accented glyphs. The approach is based on generic common hinting strategies for accents. See illustrations and methods described above.
+**Recommend** Extend / modify VTT Autohinter to have built in special intelligence specific to accented glyphs. The approach is based on generic common hinting strategies for accents. See illustrations and methods described above. The two basic approachs described, can be applied to a wide variety of accent types and will work consistently in displaying clear and readable accents at all sizes across all variation instances. _(width and weight for example)_
 
