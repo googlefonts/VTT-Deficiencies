@@ -75,7 +75,25 @@ The Res addition to the command ResAnchor, for example, stands for Rendering Env
 
 **Recommended solution:** Investigate adding support to add RES commands via the Hinting GUI in VTT. When rehinting any existing glyph from scratch, for example, having the ability to add the RES commands via the hinting GUI saves time, and results in an improved workflow. Currently the RES commands can only be added manually to the VTT Talk, after the glyph has been hinted using the Graphical Hinting tools. 
 
+**Suggestion:** GASP Table recommendations for Variable fonts
 
+When following the recommendations for hinting variable fonts described [here](https://github.com/googlefonts/how-to-hint-variable-fonts) the following ‘gasp’ table settings are recommended and apply to all Variation Instances. For static fonts, the ‘gasp’ table can be set to have different values for each weight of the font. In Variable fonts, the ‘gasp’ table values are set once to cover all Instances.
+
+**Recommended default values for all Variable fonts**
+
+Disable hinting, and enable symmetric smoothing below 9ppem
+
+Enable hinting, and enable symmetric smoothing @ 9ppem and above
+
+**Current workflow practice**
+
+The VTT Autohinter automatically generates a ‘gasp’ table for a Variable font. The current ‘gasp’ values that are generated in Visual TrueType 6.35 do not match the best practice recommendations, and have to be edited manually in VTT. (Edit menu, > Edit Gasp Table)
+
+**Recommended solution:** Modify the Autohinter to output the best practice recommended values for the GASP table settings, when autohinting a Variable font. 
+
+In every font there are certain conditions that will always apply. These conditions are controlled through code placed in the pre-program. When hinting instructions are used and when they are not is a global condition controlled in the pre-program. The size at which hinting is turned on and off, specified in the pre-program should be coordinated with the GASP table values. 
+
+**Recommended solution:** Modify the default pre-program default template.
 
 ## Instance Range CVT Deltas 
 _Ideas, and code for future hinting of Variable fonts_
