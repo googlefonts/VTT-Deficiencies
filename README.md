@@ -382,8 +382,14 @@ The CVT table also contains many entries that are not needed for hinting in Vari
 
 **Recommendation:**
 
-Research and review the above table template. Remove all unnecessary cvt entries from the default CVT Table template. Remove all unneeded functions from the Font program template. Modify the VTT Autohinter to generate these new simplified templates, for a modern hinting workflow.
+Research and review the above table templates. Remove all unnecessary cvt entries from the default CVT Table template. Remove all unneeded functions from the Font program template. Modify the VTT Autohinter to generate these new simplified templates, for a modern hinting workflow.
 
 **Benefits**
 
 Potential for some font file size savings. A simpler CVT Table and Font program would be useful also for an easier workflow.
+
+## Relevant external discussions
+
+[Open sourcing VTT](https://typedrawers.com/discussion/2846/open-sourcing-vtt)
+
+[“Constraints” instead of PS or TT hints](https://github.com/unified-font-object/ufo-spec/issues/43)
