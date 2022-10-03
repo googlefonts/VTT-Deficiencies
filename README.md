@@ -30,7 +30,7 @@ _Built in support in the autohinter for scripts other than Latin_
  
 _All notes are based on the publicly available current version of Visual TrueType 6.35, running on Surface Laptop  / Windows 11_
 
-## 1. VTT 6.35 Bugs / Suggested improvements
+## VTT 6.35 Bugs / Suggested improvements
 
 _Bugs and suggestions for improvements to the VTT GUI and Autohinter_
 
@@ -336,7 +336,7 @@ Both points on the outline, 1, and 2 are rounded to the grid independently of on
  
 **Recommend** Extend / modify VTT Autohinter to have built in special intelligence specific to accented glyphs. The approach is based on generic common hinting strategies for accents. See illustrations and methods described above. The two basic approachs described, can be applied to a wide variety of accent types and will work consistently in displaying clear and readable accents at all sizes across all variation instances. _(width and weight for example)_
 
-**Extending Character group support**
+## Extending Character group support
 
 _Extending Character group support for addition glyph sets, and scripts besides Latin_
 
