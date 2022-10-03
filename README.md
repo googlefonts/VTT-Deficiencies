@@ -8,7 +8,7 @@ VisualTrueType 6.35 includes support to handle all aspects of hinting Variable f
 
 The following notes are intended to open up discussion among the wider type community as well as to serve as pointers for any future open source development work on the VTT Autohinter. The areas discussed below regarding hinting variable fonts, are where I spend the most time, both refining the code and checking for consistent and reliable code output. The eventual goal is to achieve a greater level of consistency, global support for scripts other than Latin, as well as correctness and confidence in the Autohinter code output, resulting in less time spent making manual adjustments. The notes are broken out into a few rough categories.
 
-**1. Existing bugs or unexpected behaviours while using VTT 6.35, and suggested ideas for improvements**
+**1. VTT 6.35 bugs and unexpected behaviours. Suggested ideas for improvements**
 
 **2. Ideas, and code for future hinting of Variable fonts**  
 
@@ -34,7 +34,9 @@ _All notes are based on the publicly available current version of Visual TrueTyp
 
 _Bugs and suggestions for improvements to the VTT GUI and Autohinter_
 
-**Bug: Compile VTT talk via menu option, not working**
+## VTT 6.35 Bugs
+
+**Compile VTT talk via menu option, not working**
 
 Changes made manually to the code in the VTT Talk window, are not compiled when using the menu option Tools > Compile > VTT talk. 
 
@@ -42,13 +44,13 @@ Changes made manually to the code in the VTT Talk window, are not compiled when 
 
 **Expected:** Code should compile. The usual and faster method of using CTRL R (Compile) is working as expected
 
-**Bug: X-Positioning composite code is broken in Variable fonts**
+**X-Positioning composite code is broken in Variable fonts**
 
 The autohinter has an option to disable all x-direction hinting for the entire font under _(Tools > options > Autohinter Tab > Disable X-Direction Hints)_  X-positioning code for accents is still generated however when this option is set.
 
 **Recommendation:** Disable x-positioning code output from Autohinter for accent positioning in x-direction [SVTCAX].
 
-**Bug: Importing xml files into larger fonts showing spinning disk**
+**Importing xml files into larger fonts showing spinning disk**
 
 Importing an xml file into a larger font, shows a spinning disk. It appears that the application has hung, with no indication of progress.
 
@@ -56,12 +58,14 @@ Importing an xml file into a larger font, shows a spinning disk. It appears that
 
 **Recommendation:** Show progress bar for import of xml.
 
-**Suggestion: Compile everything for all glyphs and save on Import of XML file**
-When changes are made to an exported XML file, and the XML file is imported in VTT, the code needs to be compiled. Tools > Compile > Everything for all glyphs. 
 
-**Idea:** Add option in the VTT UI, to Import, Compile everything for all glyphs and save. 
+## VTT Suggested improvements
 
-**Suggestion:** Change the Default output from the Autohinter from ‘ResYDist’ to ‘YShift’ for Variable font hinting
+**Compile everything for all glyphs and save on Import of XML file**
+
+When changes are made to an exported XML file, and the XML file is imported in VTT, the code needs to be compiled. Tools > Compile > Everything for all glyphs. Add option in the VTT UI, to Import, Compile everything for all glyphs and save. 
+
+**Change the Default output from the Autohinter from ‘ResYDist’ to ‘YShift’ for Variable font hinting**
 
 The current recommendation for hinting Variable fonts is to replace all ‘ResYDist’ instructions with a ‘YShift’ instruction. Using the ‘YShift’ command in place of the ‘ResYDist’ for controlling stem weights, helps to render the outlines of all weight Variations from lightest to heaviest, using a more natural rendering from the outline. _The shift command is typically used to constrain a distance in the y-direction between two points, when no CVT is used or needed (i.e. when a distance is too small to warrant using a CVT to control the distance)_
 
@@ -71,7 +75,7 @@ The ‘ResYDist’ command, causes stems to round to full pixels at smaller size
 
 **Recommended solution:** Modify the Autohinter to output the YShift command, by default, when hinting Variable fonts. 
 
-**Suggestion:** Investigate adding support to add RES commands via the Hinting GUI in VTT.
+**Investigate adding support to add RES commands via the Hinting GUI in VTT**
 
 The Res addition to the command ResYAnchor, for example, stands for _Rendering Environment Specific,_ and ensures that the appropriate rounding happens, for various rendering environments. This saves adding additional Hinting commands if Hinting is required to work in a variety of rendering environments, and is recommended when hinting Variable fonts. _The Res command calls a Function, that is designed to also allow for more subtle rendering of features such as undershoots and overshoots_
 
@@ -79,7 +83,7 @@ The Res addition to the command ResYAnchor, for example, stands for _Rendering E
 
 **Recommended solution:** Investigate adding support to add RES commands via the Hinting GUI in VTT. When rehinting any existing glyph from scratch, for example, having the ability to add the RES commands via the hinting GUI saves time, and results in an improved workflow. Currently the RES commands can only be added manually to the VTT Talk, after the glyph has been hinted using the Graphical Hinting tools. 
 
-**Suggestion:** GASP Table recommendations for Variable fonts
+**GASP Table recommendations for Variable fonts**
 
 When following the recommendations for hinting variable fonts described [here](https://github.com/googlefonts/how-to-hint-variable-fonts) the following ‘gasp’ table settings are recommended and apply to all Variation Instances. For static fonts, the ‘gasp’ table can be set to have different values for each weight of the font. In Variable fonts, the ‘gasp’ table values are set once to cover all Instances.
 
@@ -101,7 +105,7 @@ In every font there are certain conditions that will always apply. These conditi
 
 ## Ideas, and code for future hinting of Variable fonts
 
-**Instance Range CVT Delta Function**
+## Instance Range CVT Delta Function
 
 _Targeted cvt deltas for design space instances or instance ranges_
 
@@ -183,7 +187,7 @@ Superior letters need to to use a cvt to control the size on screen and uses one
 
 **Issues and suggestions:** More testing of the New Functions and documentation is needed. Make the Functions available for use for hinting Variable fonts. Longer term have the Autohinter output these function as part of the default Font Program output. 
 
-**Middle bar centering**
+## Middle bar centering
 
 **Use case**
 
