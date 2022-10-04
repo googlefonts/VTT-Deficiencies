@@ -241,7 +241,7 @@ The second method that uses a dist to control the weight is also not suitable fo
 
 Refine the current function used for centering, to support ’Yshift’, to control the weight of the vertical bar feature, while keeping the centering aspect of the function. This will maintain a consistency with the current recommended hinting method, that uses the shift command to control the weight of horizontal features. Document the functions and make it available in the VTT Font Program for hinting Variable fonts. 
 
-**Accent positioning and hinting** 
+## Accent positioning and hinting
 
 **Autohinter output for x-axis Accent positioning is incorrect in Variable fonts**
 
@@ -391,6 +391,26 @@ Research and review the above table templates. Remove all unnecessary cvt entrie
 **Benefits**
 
 Potential for some font file size savings. A simpler CVT Table and Font program would be useful also for an easier workflow.
+
+## Future Hinting research
+
+As discussed in the [Variable font hinting document](https://github.com/googlefonts/how-to-hint-variable-fonts#hinting-and-new-rendering), and here iin [Respecting the outlines](https://github.com/googlefonts/how-to-hint-variable-fonts/tree/main/Article) hinting has been reduced to a simple set of instructions, to control important heights, using cvt’s as a reference, and to control stem weights, using either a ResYdist, or Shift command. Maintaining consistent heights, and reducing blur on horizontals, are the main benefits of hinting for modern rendering environments.
+
+The basic hinting commands needed to hint a Variable font are as follows
+ResYAnchor _(with and without cvt references)_, ResYDist, YShift and YInterpolate
+
+In addition to Anchors with height cvt references, and stem weight control, using the Dist or Shift commands, the next important hinting command is ‘Interpolate’. _(Interpolate moves untouched points between two moved key points or ‘parents points’, and keeping the relation the same as the original position of all points)_
+
+A large part of the post Autohinter work, is manually adding Interpolate code. The Autohinter does a poor job of interpolation, mostly not even generating any code at all. Glyphs that typically need the code, A B K, M, N, Q, R, S, V, W, X, Y, Z have to be manually edited to add the Interpolation code. This is just the Uppercase in Latin. In any typical font, there are many additional glyphs that need this code, to ensure the correct weight of the hinted glyph is maintained. 
+
+Taking a step back now to look at what hinting is useful for, and what is missing, the Interpolate code stands out as a missing piece. Perhaps it can be rethought and engineered in a simpler way. As part of this investigation, I did some experiemental hinting, to try to understand how a simpler approach may be the answer to many of the glyphs that currently need interpolation code add. Lets have a look at the following. 
+
+<img width="100%" height="100%" src="Images/AutohintM.png">
+
+<img width="100%" height="100%" src="Images/InterpolateM.png">
+
+<img width="100%" height="100%" src="Images/MinimalM.png">
+
 
 ## Relevant external discussions
 
