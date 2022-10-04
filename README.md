@@ -394,22 +394,44 @@ Potential for some font file size savings. A simpler CVT Table and Font program 
 
 ## Future Hinting research
 
-As discussed in the [Variable font hinting document](https://github.com/googlefonts/how-to-hint-variable-fonts#hinting-and-new-rendering), and here iin [Respecting the outlines](https://github.com/googlefonts/how-to-hint-variable-fonts/tree/main/Article) hinting has been reduced to a simple set of instructions, to control important heights, using cvt’s as a reference, and to control stem weights, using either a ResYdist, or Shift command. Maintaining consistent heights, and reducing blur on horizontals, are the main benefits of hinting for modern rendering environments.
+As discussed in the [Variable font hinting document](https://github.com/googlefonts/how-to-hint-variable-fonts#hinting-and-new-rendering), and here in [Respecting the outlines](https://github.com/googlefonts/how-to-hint-variable-fonts/tree/main/Article) hinting has been reduced to a simple set of instructions, to control important heights, using cvt’s as a reference, and to control stem weights, using either a ResYdist, or YShift command. Maintaining consistent heights, and reducing blur on horizontals, are the main benefits of hinting for modern rendering environments.
 
 The basic hinting commands needed to hint a Variable font are as follows
 ResYAnchor _(with and without cvt references)_, ResYDist, YShift and YInterpolate
 
-In addition to Anchors with height cvt references, and stem weight control, using the Dist or Shift commands, the next important hinting command is ‘Interpolate’. _(Interpolate moves untouched points between two moved key points or ‘parents points’, and keeping the relation the same as the original position of all points)_
+In addition to Anchors with height cvt references, and stem weight control, using the Dist or Shift commands, the next important hinting command is ‘Interpolate’. _(Interpolate moves untouched points between two moved key points or ‘parents points’, keeping the relation the same as the original position of all points)_
 
-A large part of the post Autohinter work, is manually adding Interpolate code. The Autohinter does a poor job of interpolation, mostly not even generating any code at all. Glyphs that typically need the code, A B K, M, N, Q, R, S, V, W, X, Y, Z have to be manually edited to add the Interpolation code. This is just the Uppercase in Latin. In any typical font, there are many additional glyphs that need this code, to ensure the correct weight of the hinted glyph is maintained. 
+When preparing any Variable font, a large part of the post Autohinter work, is to manually add ‘Interpolate’ code. The Autohinter does a poor job of interpolation, mostly not generating any code at all. Glyphs that typically need the code, A B K, M, N, Q, R, S, V, W, X, Y, Z for example, need manually editeding to add the ‘Interpolate’ code. This is just the Uppercase in Latin. In any typical font, there are many additional glyphs that need this code, to ensure the correct weight of the hinted glyph is maintained. 
 
-Taking a step back now to look at what hinting is useful for, and what is missing, the Interpolate code stands out as a missing piece. Perhaps it can be rethought and engineered in a simpler way. As part of this investigation, I did some experiemental hinting, to try to understand how a simpler approach may be the answer to many of the glyphs that currently need interpolation code add. Lets have a look at the following. 
+Taking a step back now to look at what hinting is useful for, and what is missing, the ‘Interpolate’ code stands out as a missing piece. Perhaps this can be revisted,and engineered in a simpler way. As part of this investigation, I did some experimental hinting, to try to understand how a simpler approach may be the answer to many of the glyphs that currently need ‘Interpolation’ code added. Lets have a look at the following. 
 
 <img width="100%" height="100%" src="Images/AutohintM.png">
 
+**YAnchor (8, 8)** Moves point 8 to the control value listed in the ‘Control Program’, that corresponds to the baseline, (cvt #8) and rounds this point to a grid line.
+
+**YShift (8, 16) YShift (8, 23)** Shifts point 16 and 23, to a new position on the grid, relative to point 5’s new position on the grid, ensuring point 16 and 23 will also be grid-fit to the baseline. **Note** _Because points 16 and 23 are at the same y coordinates as point 8, its not clear that that these additional commands are needed_ 
+
+**YAnchor (10, 2)** Moves point 10 to the control value listed in the ‘Control Program’, that corresponds to the Cap height, (cvt #2) and rounds this point to a grid line.
+
+**YShift (10, 14)** Shifts point 14, to a new position on the grid, relative to point 10’s new position on the grid, ensuring point 14 will also be grid-fit to the Cap Height. **Note** _Because points 14 is the same y-coordinate as point 10, it is not clear that that this additional command is needed_
+
+This is the code as output for the Capital M by the VTT Autohinter. In this case the outline is scaled to the desired size and Point 10 is rounded to the grid, using the scaled and rounded height of cvt 2. The remaining points, 1,2,11,12,22 and 21, are still not positioned correctly relative to point 8 and point 10’s new position on the grid. The result is that at this size, points 1,2,22 and 21 are too high, and points 11 and 12 are too low in both the Regular and Light weight variation of the font. This causes the diagonals in the hinted outline to appear to be too light. These point now need to be Interpolated, so as these points are properly positioned between Baseline and Cap Height.
+
+**Note** _The last command in the VTT talk, Smooth(), generates low level code of IUP[ Y ] and IUP [ X ], which according to the TrueType specification, ‘Interpolates Untouched Points through the outline’. 
+
+**Note** This does not appear to be the case in this example. More investigation is needed to inderstand why this is the case._
+
 <img width="100%" height="100%" src="Images/InterpolateM.png">
 
+**YInterpolate(8,2,12,22,10)** Untouched points are interpolated between Parent points, to ensure the relationship of these points is kept the same as the original position of all points in the high resolution outline. This corrects the weight of diagonals. **Note** This code is a manual addition and has to be added to many glyphs in any typical font. 
+
 <img width="100%" height="100%" src="Images/MinimalM.png">
+
+In this final example, only 2 points on the outline are touched. Point 8 is positioned on the Baseine and point 2 on the Cap Height. When this code is compiled, the result is equivalent to the second example shown above. The untouched points appear to be interpolated correctly, using just the Smooth() command. Points 23 and 16 on the baseline, are aligned correctly at all sizes. Point 14 at the Cap Height is also correct grid-fitted and aligned at all sizes. Points 1,2,11,12,22, are all positioned correctly in relation to points 2 and 8. 
+
+**Recommendation:** This last example points to a newer simpler method of hinting, which would be another step towards fully automated hinting of Variable fonts. In addition to a simpler approach, this would also save on file size.
+
+More detailed research is required to fully understand and document, how the Gridfitting, Interpolate and Smooth all work together. Given the new simpler set of instructions, it is possible that bulding a new Autohinter or extending TTF Autohint for example, might use this new information. 
 
 
 ## Relevant external discussions
