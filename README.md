@@ -233,7 +233,7 @@ The Function supports two methods of use
 
 2. Uses a Dist to control the weight of the middle bar
 
-Unfortunately neither of these methods fit into the current workflow and methods for hinting Variable fonts. Cvt’s are not typically not used to control the weights of vertical features (ie: horizontal bars) 
+Unfortunately neither of these methods fit into the current workflow and methods for hinting Variable fonts. Cvt’s are typically not used to control the weights of vertical features (ie: horizontal bars) 
 
 The second method that uses a dist to control the weight is also not suitable for all variable fonts, especially any that support lighter weight variations. The dist command by its nature, always rounds to a full pixel. This causes too much distortion in lighter weights and is not recommend for use.
 
@@ -326,17 +326,17 @@ Both points on the outline, 0, and 1 are rounded to the grid independantly of on
 
 **Middle:** Autohinted outline / Gridfit
 
-**YAnchor (1)** Moves point 1, (point at y-min) to the grid, without a reference to a cvt.
+**YAnchor (0)** Moves point 0, (point at y-min) to the grid, without a reference to a cvt.
 
 **YAnchor (2)** Moves point 2 (point at y-max) to the grid, without a reference to a cvt.
 
-Both points on the outline, 1, and 2 are rounded to the grid independently of one another. In this case at 12ppem, point 1, rounds up to grid, point 2 rounds down to grid, resulting in a hinted outline that is one pixel in height. To correctly describe an acute accent, a minimum of two pixels in height is needed. The autohinted outline in case will appear as a dot or flat line. 
+Both points on the outline, 0, and 2 are rounded to the grid independently of one another. In this case at 12ppem, point 0, rounds up to grid, point 2 rounds down to grid, resulting in a hinted outline that is one pixel in height. To correctly describe an acute accent, a minimum of two pixels in height is needed. The autohinted outline in case will appear as a dot or flat line. 
 
 **Right:** Manually hinted outline / Gridfit
 
-**YAnchor (1)** Moves point 1, (point at y-min) to the grid, without a reference to a cvt.
+**YAnchor (0)** Moves point 0, (point at y-min) to the grid, without a reference to a cvt.
 
-**YDist(1,2,>=2)** Moves point 2, to a new position on the grid, relative to point 1’s new position on the grid, while also maintaining a minumum distance of 2 pixels at all sizes for all variation instance. _(width and weight)_
+**YDist(0,2,>=2)** Moves point 2, to a new position on the grid, relative to point 0’s new position on the grid, while also maintaining a minumum distance of 2 pixels at all sizes for all variation instance. _(width and weight)_
  
 **Recommend** Extend / modify VTT Autohinter to have built in special intelligence specific to accented glyphs. The approach is based on generic common hinting strategies for accents. See illustrations and methods described above. The two basic approachs described, can be applied to a wide variety of accent types and will work consistently in displaying clear and readable accents at all sizes across all variation instances. _(width and weight for example)_
 
@@ -350,7 +350,7 @@ The ‘character group’ tells Visual TrueType which group of values to use fro
 
 Glyphs that fall outside of this specified glyph range, are autohinted, but are not assigned cvt’s. A YAnchor command is typically applied to the y-min and y-max of these glyphs, without a reference to a cvt. 
 
-_VTT does currently allow user definable character groups and feature categories, for glyph set that fall outside of the four hard-wired categories "uppercase", "lowercase", "figure", and "other". Further character groups and feature categories can be added into the new control program, along with the sequence of glyphs needed to visualize the spacing. See the link below for an example of adding Indic character group to [Noto Devanagari Serif Variable font](https://github.com/googlefonts/how-to-hint-complex-script-variable-fonts#adding-character-group-information-and-cvts-for-devanagari) 
+VTT does currently allow user definable character groups and feature categories, for glyph set that fall outside of the four hard-wired categories "uppercase", "lowercase", "figure", and "other". Further character groups and feature categories can be added into the new control program, along with the sequence of glyphs needed to visualize the spacing. See the link below for an example of adding Indic character group to [Noto Devanagari Serif Variable font](https://github.com/googlefonts/how-to-hint-complex-script-variable-fonts#adding-character-group-information-and-cvts-for-devanagari) 
 
 **Note:** The addition of further character groups supports manual hinting, and speeds up the hinting process, by allowing VTT to automatically choose the correct cvt’s as the glyph is hinted using the graphical hinting tools. It is not possible currently to have the Autohinter recognise these new character groups, and apply the correct cvt’s automatically. 
 
@@ -415,7 +415,7 @@ Taking a step back now to look at what hinting is useful for, and what is missin
 
 **YShift (10, 14)** Shifts point 14, to a new position on the grid, relative to point 10’s new position on the grid, ensuring point 14 will also be grid-fit to the Cap Height. **Note** _Because points 14 is the same y-coordinate as point 10, it is not clear that that this additional command is needed_
 
-This is the code as output for the Capital M by the VTT Autohinter. In this case the outline is scaled to the desired size and Point 10 is rounded to the grid, using the scaled and rounded height of cvt 2. The remaining points, 1,2,11,12,22 and 21, are still not positioned correctly relative to point 8 and point 10’s new position on the grid. The result is that at this size, points 1,2,22 and 21 are too high, and points 11 and 12 are too low in both the Regular and Light weight variation of the font. This causes the diagonals in the hinted outline to appear to be too light. These point now need to be Interpolated, so as these points are properly positioned between Baseline and Cap Height.
+This is the code as output for the Capital M by the VTT Autohinter. In this case the outline is scaled to the desired size and Point 10 is rounded to the grid, using the scaled and rounded height of cvt 2. The remaining points, 1,2,11,12,22 and 21, are still not positioned correctly relative to point 8 and point 10’s new position on the grid. The result is that at this size, points 1,2,22 and 21 are too high, and points 11 and 12 are too low in both the Regular and Light weight variation of the font. This causes the diagonals in the hinted outline to appear to be too light. These points now need to be Interpolated, so as they are properly positioned between Baseline and Cap Height.
 
 **Note** _The last command in the VTT talk, Smooth(), generates low level code of IUP[ Y ] and IUP [ X ], which according to the TrueType specification, ‘Interpolates Untouched Points through the outline’. 
 
